@@ -1,0 +1,64 @@
+<table class="calendar">
+    <thead class="calendar-header">
+        <tr class="calendar-header__row">    
+            <td class="calendar-header__cell"
+                *ngFor="let dayName of daysName">{{ dayName }}
+            </td>
+        </tr>
+    </thead>
+    <tbody class="calendar-body">
+        <tr class="calendar-body__row" #row_one>
+            <td class="calendar-body__day"
+                id="calendar-body__day1-{{i}}"
+                (click)="onRemainder($event)"
+                *ngFor="let weekDay of weekDays; let i = index" #cell_one>
+                <span 
+                    class="day"
+                    *ngIf="i === 6">{{ 1 }}</span>                    
+            </td>
+        </tr>
+        <tr class="calendar-body__row" #row_two>
+            <td class="calendar-body__day"
+                id="calendar-body__day2-{{i}}"
+                (click)="onRemainder($event)"
+                *ngFor="let weekDay of weekDays; let i = index" #cell_two>                
+                <span class="day">{{ i + 2 }}</span>
+            </td>
+        </tr>
+        <tr class="calendar-body__row" #row_three>
+            <td class="calendar-body__day"
+                id="calendar-body__day3-{{i}}"
+                (click)="onRemainder($event)"   
+                *ngFor="let weekDay of weekDays; let i = index">
+                <span class="day">{{ i + 9 }}</span>
+            </td>
+        </tr>
+        <tr class="calendar-body__row" #row_four>
+            <td class="calendar-body__day"
+                id="calendar-body__day4-{{i}}"
+                (click)="onRemainder($event)"
+                *ngFor="let weekDay of weekDays; let i = index">
+                <span class="day">{{ i + 16 }}</span>
+            </td>
+        </tr>
+        <tr class="calendar-body__row" #row_five>
+            <td class="calendar-body__day"
+                id="calendar-body__day5-{{i}}"
+                (click)="onRemainder($event)"
+                *ngFor="let weekDay of weekDays; let i = index">
+                <span class="day">{{ i + 23 }}</span>
+            </td>
+        </tr>
+        <tr class="calendar-body__row" #row_six>
+            <td class="calendar-body__day"
+                id="calendar-body__day6-{{i}}"
+                (click)="onRemainder($event)"
+                *ngFor="let weekDay of weekDays; let i = index">
+                <span
+                    class="day" 
+                    *ngIf="i < 2">{{ i + 30 }}</span>
+            </td>
+        </tr>
+    </tbody>
+</table>
+
