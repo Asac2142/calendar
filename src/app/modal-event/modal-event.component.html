@@ -1,0 +1,56 @@
+<div class="backdrop" [ngClass]="{ open_backdrop: modalRemainder.flag }"></div>
+<div class="modal-remainder" [ngClass]="{ open_modal: modalRemainder.flag }">
+    <div class="modal-remainder__form">
+        <div class="close-icon" (click)="onCloseModalRemainder()"></div>
+        <label for="reminder-label" class="remainder-label">Reminder</label>
+        <input 
+          type="text" 
+          name="reminder-label" 
+          class="input-remainder" 
+          placeholder="What do you have in mind?"
+          [maxLength]="30" 
+          [(ngModel)]="remainder">
+        <label class="date-label" for="date-picker">Date</label>
+        <div class="input-box-container">
+            <input 
+                name="date-picker"
+                class="input-box" 
+                placeholder="Select a date" 
+                angular-mydatepicker name="mydate" 
+                (click)="dp.toggleCalendar()" 
+                [(ngModel)]="date" 
+                [options]="dateOptions" 
+                #dp="angular-mydatepicker" 
+                (dateChanged)="onDateChanged($event)"/>
+          </div>    
+          <label class="label-time" for="time-picker">Time</label>                
+          <input 
+            class="input-time"
+            type="time" 
+            name="time-picker" 
+            min="09:00" 
+            max="18:00" 
+            [(ngModel)]="time">
+          <label for="city" class="city-label">City</label>
+          <select 
+            name="city" 
+            id="city" 
+            class="city-select"
+            [(ngModel)]="selectedCity">
+              <option               
+                *ngFor="let city of cities"
+                [ngValue]="city">{{ city }}</option>
+          </select>
+          <label for="color" class="color-label">Color</label>          
+          <input 
+            class="input-color" 
+            [(colorPicker)]="color" 
+            [style.background]="color"/>
+
+          <hr>
+          <div class="btn-group">
+              <button class="btn-save" (click)="onSaveRemainder()">Save</button>
+              <button class="btn-cancel" (click)="onCloseModalRemainder()">Cancel</button>
+          </div>
+    </div>
+</div>
