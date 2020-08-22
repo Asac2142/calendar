@@ -9,6 +9,7 @@ import { ModalEventComponent } from './modal-event/modal-event.component';
 import { AngularMyDatePickerModule } from 'angular-mydatepicker';
 import { ColorPickerModule } from 'ngx-color-picker';
 import { RemainderService } from './services/remainders.service';
+import { WeatherService } from './services/weather.service';
 
 @NgModule({
   declarations: [
@@ -23,7 +24,7 @@ import { RemainderService } from './services/remainders.service';
     HttpClientModule,
     ColorPickerModule
   ],
-  providers: [RemainderService],
+  providers: [RemainderService, WeatherService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

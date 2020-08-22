@@ -1,10 +1,11 @@
 import { Component, DoCheck, OnDestroy, OnInit } from '@angular/core';
+import { Subscription } from 'rxjs';
 
 import {IAngularMyDpOptions, IMyDateModel} from 'angular-mydatepicker';
-import { Subscription } from 'rxjs';
 import { CityService } from 'src/app/services/city.service';
 import { Remainder } from '../model/remainder';
 import { RemainderService } from '../services/remainders.service';
+import { WeatherService } from '../services/weather.service';
 
 @Component({
   selector: 'app-modal-event',
@@ -19,17 +20,21 @@ export class ModalEventComponent implements OnInit, OnDestroy, DoCheck {
   public remainder: string;
   public time: string;
   public cities: string [] = [];
-  public citySubcription: Subscription
+  public citySubscription: Subscription;
+  public weatherSubscription: Subscription;
   public selectedCity: string;
+  public weather: string;
   public dateOptions: IAngularMyDpOptions = {
     dateRange: false,
     dateFormat: 'dd.mm.yyyy'    
   };
 
-  public constructor(private cityService: CityService, private remainderService: RemainderService) {}
+  public constructor(private cityService: CityService, 
+    private remainderService: RemainderService, 
+    private weatherService: WeatherService) {}
 
   public ngOnInit(): void { 
-    this.cityService.getCities().subscribe(cities => {
+    this.citySubscription = this.cityService.getCities().subscribe(cities => {
       for(let city of cities) {
         this.cities.push(city.name);
       }      
@@ -60,7 +65,8 @@ export class ModalEventComponent implements OnInit, OnDestroy, DoCheck {
   }
 
   public ngOnDestroy(): void {
-    this.citySubcription.unsubscribe();
+    this.citySubscription.unsubscribe();
+    this.weatherSubscription.unsubscribe();
   }
 
   private getRemainder(): Remainder {
@@ -71,17 +77,40 @@ export class ModalEventComponent implements OnInit, OnDestroy, DoCheck {
       this.remainder, 
       this.selectedCity, 
       this.time, 
-      this.color
+      this.color,
+      this.weather
     ): null;
   }
 
   private getRemainderId(day: string): string {
-    const remainderQuantity = this.remainderService.filterByScheduledDay(day).length;    
+    const remainderQuantity = this.remainderService.filterByScheduledDay(day).length;  
+    this.getWeather();  
     return `${this.modalRemainder.day}_${(remainderQuantity)}_${this.color}`;
   }
 
   private getFormmatedDate(): string {
     return this.date? this.date.singleDate.formatted : '';
+  }
+
+  private getWeather(): void {
+    this.setCityForRemainderWeather();
+    this.setDaysForRemainderWeather();
+    this.weatherSubscription = this.weatherService.getForecastWeatherByCity().subscribe(data => {     
+      this.weather = data.weather[0]['main'];
+    });
+  }
+
+  private setCityForRemainderWeather(): void {
+    this.weatherService.city = this.selectedCity;
+  }
+
+  private setDaysForRemainderWeather(): void {
+    const days = this.getRemainderDay();
+    this.weatherService.days = days > 5 ? 5 : days;
+  }
+
+  private getRemainderDay(): number {
+    return this.date? +this.date.singleDate.formatted.split('.')[0] : 0;
   }
 
   private getRemainderDate(): any {

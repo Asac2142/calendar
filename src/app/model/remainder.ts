@@ -17,7 +17,9 @@ export class Remainder {
         private content: string,
         private city: string,
         private time: string,
-        private color: string){};
+        private color: string,
+        private weather: string){};
+        
 
     public getCalendarDay(): string {
         return this.calendarDay;
@@ -33,5 +35,9 @@ export class Remainder {
 
     public getContent(): string {
         return this.content;
+    }
+
+    public getWeather(): string {
+        return this.weather;
     }
 }
