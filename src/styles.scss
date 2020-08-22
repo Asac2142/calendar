@@ -2,17 +2,13 @@
 
 $default-margin: 0;
 $default-padding: 0;
-$default-background-color: #3d3b3b;
 $default-box_sizing: border-box;
-$font-color: #fff;
 $font-familiy: ('Roboto', sans-serif);
 
 * {
     margin: $default-margin;
     padding: $default-padding;
     box-sizing: $default-box_sizing;
-    //background: $default-background-color;
-    //color: $font-color;
     font-family: $font-familiy;
 }
 

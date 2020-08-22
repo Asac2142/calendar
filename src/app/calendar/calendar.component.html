@@ -11,7 +11,7 @@
             <td class="calendar-body__day"
                 id="calendar-body__day1-{{i}}"
                 (click)="onRemainder($event)"
-                *ngFor="let weekDay of weekDays; let i = index" #cell_one>
+                *ngFor="let weekDay of weekDays; let i = index">
                 <span 
                     class="day"
                     *ngIf="i === 6">{{ 1 }}</span>                    
@@ -21,7 +21,7 @@
             <td class="calendar-body__day"
                 id="calendar-body__day2-{{i}}"
                 (click)="onRemainder($event)"
-                *ngFor="let weekDay of weekDays; let i = index" #cell_two>                
+                *ngFor="let weekDay of weekDays; let i = index">                
                 <span class="day">{{ i + 2 }}</span>
             </td>
         </tr>
