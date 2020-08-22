@@ -27,20 +27,20 @@ export class CalendarComponent implements OnInit, OnDestroy, AfterViewInit {
   
   public constructor(private remainderService: RemainderService) {}  
 
-  public ngOnInit(): void {    
+  public ngOnInit() { 
     this.remainderSub = this.remainderService.onSetRemainderEmitter.subscribe(data => {
-      this.eventsPerDay = data;      
+      this.eventsPerDay = data;           
       this.getUniqueCalendarDays();
       this.getCalendarDaysWithIds();
-      this.renderRemainderElementOnCalendarComponent();
-    });
+      this.renderRemainderElementOnCalendarComponent();      
+    });   
   }  
 
   public ngOnDestroy() {
     this.remainderSub.unsubscribe();
   }
 
-  public ngAfterViewInit() {
+  public ngAfterViewInit() {        
     this.calendarRows = [this.rowOne, this.rowTwo, this.rowThree, this.rowFour, this.rowFive, this.rowSix];
   }
 
@@ -50,7 +50,7 @@ export class CalendarComponent implements OnInit, OnDestroy, AfterViewInit {
     this.remainderService.setCreateRemainder({dayCreated: day, isCreated: create});
   }
 
-  public onRemainderCreated(event: Event): void {
+  public onRemainderCreated(event: any): void {
     console.log(event);
   }
 
@@ -80,27 +80,30 @@ export class CalendarComponent implements OnInit, OnDestroy, AfterViewInit {
             if (cellDay !== -1) {            
               this.removeChilds(content.nativeElement.childNodes[index]);
               for (let i = 0; i < value['ids'].length; i++) {
-                remainderContent = this.remainderService.getRemainderContent(value['ids'][i]);                                  
-                content.nativeElement.childNodes[index].insertAdjacentHTML(
-                  'beforeend', 
-                  `<span 
-                    id="${value['ids'][i]}" 
-                    style="background: ${value['ids'][i].split('_')[2]}; display: block; color: #fff; padding: 0.3rem; font-size: 0.8rem">
-                    ${remainderContent}
-                  </span>`);
+                remainderContent = this.remainderService.getRemainderContent(value['ids'][i]); 
+                this.createRemainder(content, index, value, remainderContent, i);
               }
             }
           }
         });
       });      
-    });
-
+    });    
   }
 
-  private removeChilds(cell: any): any {
+  private createRemainder(content: any, index: number, value: {}, remainderContent: string, i: number): void {
+    content.nativeElement.childNodes[index].insertAdjacentHTML(      
+      'beforeend', 
+      `<span 
+        id="${value['ids'][i]}" 
+        class="${value['ids'][i]}"
+        style="background: ${value['ids'][i].split('_')[3]}; display: block; color: #fff; padding: 0.3rem; font-size: 0.8rem">
+        ${remainderContent}
+      </span>`);
+  }
+  
+  private removeChilds(cell: any): void {
     while(cell.childElementCount > 1) {
       cell.lastElementChild.remove();
     }    
   }
-
 }
