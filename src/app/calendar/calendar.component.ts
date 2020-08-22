@@ -1,7 +1,7 @@
-import { Component, ElementRef, OnDestroy, OnInit, ViewChild, Renderer2 } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { Subscription } from 'rxjs';
-import { Remainder } from '../model/remainder';
 
+import { Remainder } from '../model/remainder';
 import { RemainderService } from '../services/remainders.service';
 
 @Component({
@@ -9,28 +9,27 @@ import { RemainderService } from '../services/remainders.service';
   templateUrl: './calendar.component.html',
   styleUrls: ['./calendar.component.scss']
 })
-export class CalendarComponent implements OnInit, OnDestroy {
+export class CalendarComponent implements OnInit, OnDestroy, AfterViewInit {
   @ViewChild('row_one') rowOne: ElementRef;
   @ViewChild('row_two') rowTwo: ElementRef;
   @ViewChild('row_three') rowThree: ElementRef;
   @ViewChild('row_four') rowFour: ElementRef;
   @ViewChild('row_five') rowFive: ElementRef;
   @ViewChild('row_six') rowSix: ElementRef;  
-  private remainderSub: Subscription;
   public weekDays: number [] = new Array(7);
   public daysName: string [] = ['Sunday', 'Monday', 'Thursday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
   public eventsPerDay: Remainder [];
-  calendarDays:number [] = [];
-  remainderMap: Map<string, {}> = new Map();
-  setEvents: Set<any>;
+  private calendarDays:number [] = [];
+  private remainderMap: Map<string, {}> = new Map();
+  private setEvents: Set<any>;
+  private remainderSub: Subscription;
+  private calendarRows: ElementRef[] = [];
+  
+  public constructor(private remainderService: RemainderService) {}  
 
-  public constructor(private remainderService: RemainderService, private render: Renderer2) {}  
-
-  public ngOnInit(): void {
+  public ngOnInit(): void {    
     this.remainderSub = this.remainderService.onSetRemainderEmitter.subscribe(data => {
-      this.eventsPerDay = data;
-      //console.log([...this.rowTwo.nativeElement.childNodes]);
-      // console.log(this.rowTwo.nativeElement.childNodes[0].innerText);
+      this.eventsPerDay = data;      
       this.getUniqueCalendarDays();
       this.getCalendarDaysWithIds();
       this.renderRemainderElementOnCalendarComponent();
@@ -41,10 +40,18 @@ export class CalendarComponent implements OnInit, OnDestroy {
     this.remainderSub.unsubscribe();
   }
 
+  public ngAfterViewInit() {
+    this.calendarRows = [this.rowOne, this.rowTwo, this.rowThree, this.rowFour, this.rowFive, this.rowSix];
+  }
+
   public onRemainder(event: any): void {    
     const day = event.target.firstChild.innerText;
     const create = true;
     this.remainderService.setCreateRemainder({dayCreated: day, isCreated: create});
+  }
+
+  public onRemainderCreated(event: Event): void {
+    console.log(event);
   }
 
   private getUniqueCalendarDays(): void {
@@ -65,24 +72,29 @@ export class CalendarComponent implements OnInit, OnDestroy {
     let cellDay: number;
     let remainderContent: string;    
 
-    this.remainderMap.forEach((value, key) => {      
-      [...this.rowOne.nativeElement.childNodes].map((val, index) => {
-        if (val.firstChild) { 
-          cellDay = (+val.firstChild.innerText === +key) ? +val.firstChild.innerText : -1;
-
-          if (cellDay !== -1) {            
-            this.removeChilds(this.rowOne.nativeElement.childNodes[index]);
-            for (let i = 0; i < value['ids'].length; i++) {
-              remainderContent = this.remainderService.getRemainderContent(value['ids'][i]);                                  
-              this.rowOne.nativeElement.childNodes[index].insertAdjacentHTML(
-                'beforeend', 
-                `<span id="${value['ids'][i]}" style="background: ${value['ids'][i].split('_')[2]}">${remainderContent}</span>`
-              );
+    this.remainderMap.forEach((value, key) => {  
+      this.calendarRows.map(content => {
+        [...content.nativeElement.childNodes].map((val, index) => {
+          if (val.firstChild) { 
+            cellDay = (+val.firstChild.innerText === +key) ? +val.firstChild.innerText : -1;
+            if (cellDay !== -1) {            
+              this.removeChilds(content.nativeElement.childNodes[index]);
+              for (let i = 0; i < value['ids'].length; i++) {
+                remainderContent = this.remainderService.getRemainderContent(value['ids'][i]);                                  
+                content.nativeElement.childNodes[index].insertAdjacentHTML(
+                  'beforeend', 
+                  `<span 
+                    id="${value['ids'][i]}" 
+                    style="background: ${value['ids'][i].split('_')[2]}; display: block; color: #fff; padding: 0.3rem; font-size: 0.8rem">
+                    ${remainderContent}
+                  </span>`);
+              }
             }
           }
-        }
-      });
+        });
+      });      
     });
+
   }
 
   private removeChilds(cell: any): any {
