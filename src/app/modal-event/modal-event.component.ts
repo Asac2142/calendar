@@ -59,7 +59,7 @@ export class ModalEventComponent implements OnInit, OnDestroy, DoCheck {
   public onSaveRemainder(): void {   
     if (this.getRemainder()) {
       this.remainderService.setRemainder(this.getRemainder());
-      this.remainderService.onSetRemainderEmitter.next(this.remainderService.remainders);
+      this.remainderService.onSetRemainderEmitter.next(this.remainderService.remainders);      
     } 
     this.onCloseModalRemainder();
   }
@@ -85,7 +85,7 @@ export class ModalEventComponent implements OnInit, OnDestroy, DoCheck {
   private getRemainderId(day: string): string {
     const remainderQuantity = this.remainderService.filterByScheduledDay(day).length;  
     this.getWeather();  
-    return `${this.modalRemainder.day}_${(remainderQuantity)}_${this.color}`;
+    return `_${this.modalRemainder.day}_${(remainderQuantity)}_${this.color}`;
   }
 
   private getFormmatedDate(): string {
