@@ -17,6 +17,8 @@ export class ModalEventComponent implements OnInit, OnDestroy, DoCheck {
   public modalRemainder: {day: string, flag: boolean} = {day: '1', flag: false};
   public date: IMyDateModel = null;
   public color: string;
+  public remainderDate: any;
+  public remainderId: string;
   public remainder: string;
   public time: string;
   public cities: string [] = [];
@@ -70,10 +72,13 @@ export class ModalEventComponent implements OnInit, OnDestroy, DoCheck {
   }
 
   private getRemainder(): Remainder {
+    this.remainderDate = this.getRemainderDate();
+    this.remainderId = this.getRemainderId(this.modalRemainder.day);
+
     return this.date? new Remainder(      
-      this.getRemainderDate(), 
+      this.remainderDate,
       this.modalRemainder.day, 
-      this.getRemainderId(this.modalRemainder.day), 
+      this.remainderId,  
       this.remainder, 
       this.selectedCity, 
       this.time, 
@@ -106,7 +111,7 @@ export class ModalEventComponent implements OnInit, OnDestroy, DoCheck {
 
   private setDaysForRemainderWeather(): void {
     const days = this.getRemainderDay();
-    this.weatherService.days = days > 5 ? 5 : days;
+    this.weatherService.days = days > 16 ? 16 : days;
   }
 
   private getRemainderDay(): number {
@@ -117,7 +122,11 @@ export class ModalEventComponent implements OnInit, OnDestroy, DoCheck {
     return { 
       dateRange: null,  
       singleDate: {
-        date: {year: +this.getFormmatedDate().split('.')[2], month: +this.getFormmatedDate().split('.')[1], day: +this.getFormmatedDate().split('.')[0]},
+        date: {
+          year: +this.getFormmatedDate().split('.')[2], 
+          month: +this.getFormmatedDate().split('.')[1], 
+          day: +this.getFormmatedDate().split('.')[0]
+        },
         formatted: this.getFormmatedDate()
       }, 
       isRange: false
